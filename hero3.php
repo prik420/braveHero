@@ -1,3 +1,5 @@
+<?php
+
 class Beast
 {
     //Initializing the parent class
