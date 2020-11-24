@@ -39,7 +39,7 @@ class Beast
     /**
      * @param int $life
      */
-    public function setLife($life)
+    protected function setLife($life)
     {
         $this->life = $life;
     }
@@ -55,7 +55,7 @@ class Beast
     /**
      * @param int $power
      */
-    public function setPower($power)
+    protected function setPower($power)
     {
         $this->power = $power;
     }
@@ -71,7 +71,7 @@ class Beast
     /**
      * @param int $defense
      */
-    public function setDefense($defense)
+    protected function setDefense($defense)
     {
         $this->defense = $defense;
     }
@@ -87,7 +87,7 @@ class Beast
     /**
      * @param int $speedAttack
      */
-    public function setSpeedAttack($speedAttack)
+    protected function setSpeedAttack($speedAttack)
     {
         $this->speedAttack = $speedAttack;
     }
@@ -103,7 +103,7 @@ class Beast
     /**
      * @param float|int $luck
      */
-    public function setLuck($luck)
+    protected function setLuck($luck)
     {
         $this->luck = $luck;
     }
