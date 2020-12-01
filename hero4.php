@@ -1,6 +1,6 @@
 <?php
 
-class Beast
+class Character
 {
     //Initializing the parent class
     public $name;
@@ -38,7 +38,7 @@ class Beast
     /**
      * @param int $life
      */
-    protected function setLife($life)
+    public function setLife($life)
     {
         $this->life = $life;
     }
@@ -54,7 +54,7 @@ class Beast
     /**
      * @param int $power
      */
-    protected function setPower($power)
+    public function setPower($power)
     {
         $this->power = $power;
     }
@@ -70,7 +70,7 @@ class Beast
     /**
      * @param int $defense
      */
-    protected function setDefense($defense)
+    public function setDefense($defense)
     {
         $this->defense = $defense;
     }
@@ -86,7 +86,7 @@ class Beast
     /**
      * @param int $speedAttack
      */
-    protected function setSpeedAttack($speedAttack)
+    public function setSpeedAttack($speedAttack)
     {
         $this->speedAttack = $speedAttack;
     }
@@ -102,7 +102,7 @@ class Beast
     /**
      * @param float|int $luck
      */
-    protected function setLuck($luck)
+    public function setLuck($luck)
     {
         $this->luck = $luck;
     }
@@ -149,7 +149,7 @@ class Beast
 }
 
 //Inherit form parent class
-class Hero extends Beast
+class Hero extends Character
 {
 
     protected $inAttack;
@@ -249,7 +249,7 @@ class Hero extends Beast
 
 //Creating the instances of classes
 $myHero = new Hero('Carl');
-$theBeast = new Beast('Beast');
+$theBeast = new Character('Beast');
 
 //Initiate the counting of rounds from 1
 $numberOfRounds = 1;
@@ -318,7 +318,7 @@ while($numberOfRounds <= $numberOfRoundsToPlay){
 
             case 1:
                 //Same with case 1, but here we verified if there`s a chance of having the power of dragon
-            echo "$myHero->name is attacking.\n";
+                echo "$myHero->name is attacking.\n";
                 if($theBeast->getLucky())
                     echo "$theBeast->name is getting lucky, no damage\n";
                 elseif ($myHero->chanceOfLuck(10)){
