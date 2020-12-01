@@ -1,6 +1,5 @@
 <?php
 
-
 class Beast
 {
     //Initializing the parent class
@@ -14,13 +13,13 @@ class Beast
     public function __construct($name)
     {
         $this->name = $name;
-        $this->life = rand(0, 100);
+        $this->life = rand(55, 80);
         echo "$this->name has left $this->life points of life.\n";
-        $this->power = rand(9, 100);
+        $this->power = rand(50, 80);
         echo "$this->name has left $this->power points of power.\n";
-        $this->defense = rand(9, 100);
+        $this->defense = rand(35, 55);
         echo "$this->name has left $this->defense points of defense.\n";
-        $this->speedAttack = rand(9, 100);
+        $this->speedAttack = rand(40, 60);
         echo "$this->name has left $this->speedAttack points of speed attack.\n";
         $this->luck = ((rand(25, 40) / 100) * 100);
         echo "$this->name has a change of $this->luck% to get lucky.\n";
@@ -41,10 +40,6 @@ class Beast
      */
     protected function setLife($life)
     {
-        if($life <= 0)
-            $this->life = 0;
-        elseif($life >= 100)
-            $this->life = 100;
         $this->life = $life;
     }
 
@@ -113,9 +108,9 @@ class Beast
     }
 
 
-    public function getLucky($luck)
+    public function getLucky()
     {
-        return $luck > rand(0, 100);
+        return $this->luck > rand(0, 100);
 
     }
 
@@ -123,7 +118,7 @@ class Beast
     public function stillHasLife()
     {
 
-        return $this->getLife() > 0;
+        return $this->life > 0;
 
     }
 
@@ -140,14 +135,13 @@ class Beast
         elseif ($damage >= 100) {
 
             echo "Damage is too strong, it will kill $opponent->name surely\n";
-            return 0;
+            return $opponent->getLife() - 100;
 
         }
         else{
 
             echo "Damage $damage will apply to $opponent->name\n";
-            $opponent->setLife($opponent->getLife() - $damage);
-            return $opponent->getLife();
+            return $opponent->getLife() - $damage;
         }
 
     }
@@ -164,13 +158,13 @@ class Hero extends Beast
     {
 
         $this->name = $name;
-        $this->life = rand(0, 100);
+        $this->life = rand(65, 90);
         echo "$this->name has left $this->life points of life.\n";
-        $this->power = rand(9, 100);
+        $this->power = rand(60, 70);
         echo "$this->name has left $this->power points of power.\n";
-        $this->defense = rand(9, 100);
+        $this->defense = rand(40, 50);
         echo "$this->name has left $this->defense points of defense.\n";
-        $this->speedAttack = rand(9, 100);
+        $this->speedAttack = rand(40, 50);
         echo "$this->name has left $this->speedAttack points of speed attack.\n";
         $this->luck = ((rand(10, 30) / 100) * 100);
         echo "$this->name has a change of $this->luck% to get lucky.\n";
@@ -195,24 +189,24 @@ class Hero extends Beast
 
 
     //Creating the special power for attacking
-    public function powerOfDragon($opponent)
+    public function powerOfDragon($opponentDefense, $opponentLife)
     {
-        $damage = $this->getPower() * 2 - $opponent->getDefense();
-        if ($damage <= 0) {
+        $damage = $this->getPower() * 2 - $opponentDefense;
+        if($damage <= 0){
 
             echo "This time i`ll hit you with double of my power, however you`ll get 0 damage points\n";
-            return $opponent->getLife();
-        } elseif ($damage >= 100) {
+            return $opponentLife;
+        }
+
+        elseif ($damage >= 100) {
 
             echo "This time i`ll hit you with double of my power, it`s too much for you ? Just 100 points\n";
-            $opponent->setLife(0);
-            return 0;
+            return $opponentLife - 100;
 
-        } else {
+        }else{
 
             echo "This time i`ll hit you with double of my power, meaning $damage points\n";
-            $opponent->setLife($opponent->getLife() - $damage);
-            return $opponent->getLife();
+            return $opponentLife - $damage;
         }
 
     }
@@ -227,125 +221,32 @@ class Hero extends Beast
 
 
     //Creating the special power for defending
-    public function enchantedShield($opponent)
+    public function enchantedShield($attackPower)
     {
-        $damage = $opponent->getPower() / 2 - $this->getDefense();
+        $damage = $attackPower / 2 - $this->getDefense();
 
-        if ($damage <= 0 ) {
+        if($damage <= 0){
 
             echo "This time i`ll split your power attack in half, damaging me with 0 points\n";
-            $this->setLife($this->getLife());
             return $this->getLife();
 
-        } elseif ($damage >= 100 ) {
+        }
+        elseif ($damage >= 100) {
 
             echo "This time i`ll split your power attack in half, but you hit me hard. 100 points it`s too much\n";
-            $this->setLife(0);
-            return 0;
+            return $this->getLife() - 100;
 
-        } else {
+        }else{
 
             echo "This time i`ll split your power attack in half, damaging me with just $damage points\n";
-            $this->setLife($this->getLife() - $damage);
-            return $this->getLife();
+            return $this->getLife() - $damage;
         }
 
     }
 
 
-
-    public function play($opponent, $chanceOfShield, $chanceOfPower){
-
-        //Switching the roles then break
-        switch ($this->getInAttack()) {
-            case 0:
-                echo "$opponent->name is attacking.\n";
-                //Checking if is lucky enough to avoid the hit
-                if ($this->getLucky())
-                    echo "$this->name is getting lucky, no damage\n";
-
-                //Also checking the possibility of having the enchanted Shield
-                elseif ($this->chanceOfLuck($chanceOfShield)) {
-
-                    echo "No luck, but still i get the shield\n";
-                    $this->setLife(($this->enchantedShield($opponent)));
-
-                } else {
-
-                    //If there`s none, apply the normal damage
-                    $this->setLife($opponent->isAttacking($this));
-                    if ($this->stillHasLife()){
-                        echo "Now $this->name has ";
-                        echo $this->getLife();
-                        echo " points of life \n";
-                    } else
-                        echo "$this->name is death\n";
-                }
-                $this->setInAttack(1);
-                break;
-
-            case 1:
-                echo "$this->name is attacking.\n";
-
-                //Checking if the opponent is lucky enough to avoid the hit
-                if ($opponent->getLucky($opponent->getLuck()))
-                    echo "$opponent->name is getting lucky, no damage\n";
-
-                //Checking if $this is lucky enough to double up the attack power
-                elseif ($this->chanceOfLuck($chanceOfPower)) {
-
-                    echo "I have a special power. Now i will double my attacking power\n";
-                    $opponent->setLife($this->powerOfDragon($opponent));
-
-                } else {
-
-                    //If there`s none, apply the normal damage
-                    $opponent->setLife($this->isAttacking($opponent));
-                    if ($opponent->stillHasLife()){
-                        echo "Now $opponent->name has ";
-                        echo $opponent->getLife();
-                        echo " points of life \n";
-                    } else
-                        echo "$opponent->name is death\n";
-                }
-                $this->setInAttack(0);
-                break;
-
-        }
-
-
-    }
-
-    //Finding who is starting
-    public function whoStarts($opponent)
-    {
-
-        if ($this->getSpeedAttack() > $opponent->getSpeedAttack() || ($this->getSpeedAttack() == $opponent->getSpeedAttack() && $this->getLuck() > $opponent->getLuck()))
-            $this->setInAttack(1);
-        else
-            $this->setInAttack(0);
-
-    }
-
-    //Verify if the characters have reached the max no of rounds
-    public function itIsDone($numberOfRounds, $numberOfRoundsToPlay, $opponent)
-    {
-
-        if ($numberOfRounds == $numberOfRoundsToPlay) {
-            $remainLife = $this->getLife() - $opponent->getLife();
-            echo "Maximum number of rounds was reached\n";
-            if ($remainLife > 0)
-                echo "$this->name has won.";
-            elseif ($remainLife < 0) {
-                echo "$opponent->name has won.";
-            } else
-                echo "It`s draw";
-            return 1;
-        }
-        return 0;
-
-    }
 }
+
 //Creating the instances of classes
 $myHero = new Hero('Carl');
 $theBeast = new Beast('Beast');
@@ -356,42 +257,114 @@ $numberOfRounds = 1;
 //Let the user choose the number of rounds he would like
 $numberOfRoundsToPlay = readline("How many rounds would you like?\n");
 
-//Verify who is sett to start
-$myHero->whoStarts($theBeast);
+//Finding who is sett to start
+if ($myHero->getSpeedAttack() > $theBeast->getSpeedAttack() || ($myHero->getSpeedAttack() == $theBeast->getSpeedAttack() && $myHero->getLuck() > $theBeast->getLuck()))
+    $myHero->setInAttack(1);
+else
+    $myHero->setInAttack(0);
 
 //Looping to every round
-while($numberOfRounds <= $numberOfRoundsToPlay) {
+while($numberOfRounds <= $numberOfRoundsToPlay){
 
-    //Verifying if characters are death and announce the winner if it`s not the case
-    if (!$theBeast->stillHasLife()) {
+    //Verifying if characters are still alive and announce the winner if it`s not the case
+    if(!$theBeast->stillHasLife()){
 
         echo "$myHero->name has won";
         $numberOfRounds = $numberOfRoundsToPlay;
         break;
 
-    } elseif (!$myHero->stillHasLife()) {
+    } elseif (!$myHero->stillHasLife()){
 
         echo "$theBeast->name has won";
         $numberOfRounds = $numberOfRoundsToPlay;
         break;
 
-    } else {
+    } else{
 
         //If they are still alive will continue fighting
         echo "Round no $numberOfRounds is starting.\n";
-        $myHero->play($theBeast,20 ,10);
+        switch ($myHero->getInAttack()){
+            case 0:
+                echo "$theBeast->name is attacking.\n";
+                //Checking if is lucky enough to avoid the hit
+                if($myHero->getLucky())
+                    echo "$myHero->name is getting lucky, no damage\n";
+
+                //Also checking the possibility of having the enchanted Shield
+                elseif ($myHero->chanceOfLuck(10)){
+
+                    echo "No luck, but still i get the shield\n";
+                    $myHero->setLife(($myHero->enchantedShield($theBeast->getPower())));
+                    echo "Now $myHero->name has ";
+                    echo $myHero->getLife();
+                    echo " points of life \n";
+
+                }else{
+
+                    //If there`s none, apply the damage to the defender
+                    $myHero-> setLife($theBeast->isAttacking($myHero));
+                    if(!$myHero->stillHasLife())
+                        echo "$myHero->name is death\n";
+                    else{
+                        echo "Now $myHero->name has ";
+                        echo $myHero->getLife();
+                        echo " points of life \n";
+                    }
+
+                }
+                //Switching the roles then break
+                $myHero->setInAttack(1);
+                break;
+
+            case 1:
+                //Same with case 1, but here we verified if there`s a chance of having the power of dragon
+            echo "$myHero->name is attacking.\n";
+                if($theBeast->getLucky())
+                    echo "$theBeast->name is getting lucky, no damage\n";
+                elseif ($myHero->chanceOfLuck(10)){
+
+                    echo "I have a special power. Now i will double my attacking power\n";
+                    $theBeast->setLife($myHero->powerOfDragon($theBeast->getLife(),$theBeast->getDefense()));
+                    if($theBeast->stillHasLife()){
+
+                        echo "Now $theBeast->name has ";
+                        echo $theBeast->getLife();
+                        echo " points of life \n";
+
+                    }else
+                        echo "$theBeast->name is death\n";
+
+                }else{
+                    $theBeast->setLife($myHero->isAttacking($theBeast));
+                    if(!$theBeast->stillHasLife())
+                        echo "$theBeast->name is death\n";
+
+                    else{
+                        echo "Now $theBeast->name has ";
+                        echo $theBeast->getLife();
+                        echo " points of life \n";
+                    }
+
+                }
+                $myHero->setInAttack(0);
+                break;
+        }
     }
 
     //Here is verified if there are rounds to play, and if not, which is the winner
-    if ($myHero->itIsDone($numberOfRounds, $numberOfRoundsToPlay, $theBeast))
-        $numberOfRounds = +$numberOfRoundsToPlay;
+    if($numberOfRounds == $numberOfRoundsToPlay){
+        $numberOfRounds =+ $numberOfRoundsToPlay;
+        $remainLife = $myHero->getLife() - $theBeast->getLife();
+        echo "Maximum number of rounds was reached\n";
+        if($remainLife > 0)
+            echo "$myHero->name has won.";
+        elseif($remainLife < 0){
+            echo "$theBeast->name has won.";
+        }else
+            echo "It`s draw";
+    }
 
-    //Moving on to the next round
-    $numberOfRounds++;
+    //Increasing the numberOfRounds played
+    $numberOfRounds ++;
 
 }
-
-
-
-
-
